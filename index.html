@@ -23,12 +23,20 @@
                 word-wrap: break-word;
                 line-height: 20px;
             }
+
+            p {
+                line-height: 25px;
+            }
         </style>
     </head>
     <body>
         <div>
             <p>
                 To search, input a pattern such as "abc" and it will find every word that fits. In this example, "bat" would fit but "zoo" would not.
+                <br>
+                You can use a "_" to represent any character. For instance, the word "bee" fits both "a_b" and "abb". 
+                <br>
+                If you input a capital, then it will search for that character literally, so "BAT" will only return "bat".
             </p>
         </div>
         <div>
@@ -41,77 +49,54 @@
     </body>
     <script src="words.js"></script>
     <script>
-        let text_input = document.getElementById("eve");
-        let button = document.getElementById("button");
-        let output = document.getElementById("output");
+let text_input = document.getElementById("eve");
+let button = document.getElementById("button");
+let output = document.getElementById("output");
 
-        button.addEventListener("click", (event) => {
-            let matching_words = search(text_input.value).join(", ");
-            output.innerText = matching_words;
-        });
+button.addEventListener("click", (event) => {
+    let matching_words = search(text_input.value).join(", ");
+    output.innerText = matching_words;
+});
 
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                output.innerText = search(text_input.value).join(", ");
-            }
-        });
-        
-        function search(term) {
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        output.innerText = search(text_input.value).join(", ");
+    }
+});
 
-            let search_term = term.toUpperCase();
-            let found_list = [];
+function search(term) {
 
-            for (let i = 0; i < wordList.length; i++) {
-                let word = wordList[i];
-                if (word.length !== search_term.length) {
-                    continue;
-                }
-                console.log(word);
-                let assignments = [];
-                for (let j = 0; j < search_term.length; j++) {
-                    if (/[a-z]/.test(word[j]) && assignments[search_term[j]] === undefined) {
-                        let prev = word[j];
-                        assignments[search_term[j]] = word[j];
-                        word = word.replaceAll(word[j], search_term[j]);
-                        console.log("Made Replacement, " + prev + " became " + word[j]);
-                    }
-                }
-                console.log(word);
-                if (word === search_term) {
-                    console.log(wordList[i] + " was added to the list.");
-                    found_list.push(wordList[i]);
-                } else {
-                    console.log(wordList[i] + " was NOT added to the list.");
-                }
-            }
+    let search_term = term;
+    let found_list = [];
 
-            return found_list;
+    for (let i = 0; i < wordList.length; i++) {
+        let word = wordList[i];
+        if (word.length !== search_term.length) {
+            continue;
         }
+        let assignments = [];
+        for (let j = 0; j < search_term.length; j++) {
 
-        // let endings = [];
+            if (/[a-z]/.test(search_term.charAt(j))) {
+                assignments[search_term.charAt(j)] = word.charAt(j);
+                word = word.replaceAll(word.charAt(j), search_term.charAt(j));
+            } else if (/[A-Z]/.test(search_term.charAt(j))) {
+                if (word.charAt(j) !== search_term.charAt(j).toLowerCase()) {
+                    break;
+                }
+            } else if (search_term.charAt(j) === "_") {
+                word = word.substr(0, j) + "_" + word.substr(j + 1, word.length - j);                        
+            }
+        }
+        console.log(search_term, " | ", word, " | ", wordList[i]);
+        if (word === search_term.toLowerCase()) {
+            found_list.push(wordList[i]);
+        }
+    }   
 
-        // for (let i=0; i < wordList.length; i++) {
-        //     const end = wordList[i].substr(wordList[i].length-3, 3);
+    return found_list;
+}
 
-        //     let found = false;
-        //     for (let j = 0; j < endings.length; j++) {
-        //         if (endings[j].name === end) {
-        //             endings[j].count++;
-        //             found = true;
-        //             break;
-        //         }
-        //     }
-        //     if (!found) {
-        //         endings.push(
-        //             {
-        //                 name: end,
-        //                 count: 1
-        //             }
-        //         );
-        //     }
-        // }
-
-        // console.log(endings.sort((a, b) => b.count - a.count));
 
     </script>
 </html>
