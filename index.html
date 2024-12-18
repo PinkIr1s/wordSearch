@@ -34,13 +34,13 @@
             <p>
                 To search, input a pattern such as "abc" and it will find every word that fits. In this example, "bat" would fit but "zoo" would not.
                 <br>
-                You can use a "_" to represent any character. For instance, the word "bee" fits both "a_b" and "abb". 
+                Also, you can use a "_" to represent any character. For instance, the word "bee" fits both "a_b" and "abb". 
                 <br>
                 If you input a capital, then it will search for that character literally, so "BAT" will only return "bat".
             </p>
         </div>
         <div>
-            <input id="eve">
+            <input id="inp">
             <input id="button" type="button" value="Search">
         </div>
         <div>
@@ -49,7 +49,7 @@
     </body>
     <script src="words.js"></script>
     <script>
-let text_input = document.getElementById("eve");
+let text_input = document.getElementById("inp");
 let button = document.getElementById("button");
 let output = document.getElementById("output");
 
@@ -77,9 +77,9 @@ function search(term) {
         let assignments = [];
         for (let j = 0; j < search_term.length; j++) {
 
-            if (/[a-z]/.test(search_term.charAt(j))) {
+            if (/[a-z]/.test(search_term.charAt(j)) && assignments[search_term.charAt(j)] === undefined) {
                 assignments[search_term.charAt(j)] = word.charAt(j);
-                word = word.replaceAll(word.charAt(j), search_term.charAt(j));
+                word = word.replaceAll(word.charAt(j), search_term.charAt(j).toUpperCase());
             } else if (/[A-Z]/.test(search_term.charAt(j))) {
                 if (word.charAt(j) !== search_term.charAt(j).toLowerCase()) {
                     break;
@@ -87,9 +87,10 @@ function search(term) {
             } else if (search_term.charAt(j) === "_") {
                 word = word.substr(0, j) + "_" + word.substr(j + 1, word.length - j);                        
             }
+
         }
+        if (word === flipStringCase(search_term)) {
         console.log(search_term, " | ", word, " | ", wordList[i]);
-        if (word === search_term.toLowerCase()) {
             found_list.push(wordList[i]);
         }
     }   
@@ -97,6 +98,20 @@ function search(term) {
     return found_list;
 }
 
+
+function flipStringCase(string) {
+    let characters = [];
+    for (let i = 0; i < string.length; i++) {
+        if (/[a-z]/.test(string.charAt(i))) {
+            characters.push(string[i].toUpperCase());
+        } else if (/[A-Z]/.test(string.charAt(i))) {
+            characters.push(string[i].toLowerCase());
+        } else {
+            characters.push(string[i]);
+        }
+    }
+    return characters.join("");
+}
 
     </script>
 </html>
